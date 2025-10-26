@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+:root {
+  --background: var(--color-stone-100);
+  --foreground: var(--color-stone-950);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--color-stone-950);
+    --foreground: var(--color-stone-100);
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Cascadia Code", Arial, Helvetica, sans-serif;
+}
+
+h1,h2,h3,h4,h5{
+  text-transform: capitalize;
+  font-family: "Bai Jamjuree", sArial, Helvetica, sans-serif;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: var(--text-4xl);
+}
