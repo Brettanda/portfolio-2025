@@ -1,0 +1,56 @@
+==================================================================
+https://keybase.io/brett_anda
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://brettanda.ca
+  * I am brett_anda (https://keybase.io/brett_anda) on keybase.
+  * I have a public key ASCALRpFzZaPUjkGLFHXK6qSQmiHBpInUvGbguZj7EJDGwo
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "0120802d1a45cd968f5239062c51d72baa9242688706922752f19b82e663ec42431b0a",
+      "host": "keybase.io",
+      "kid": "0120802d1a45cd968f5239062c51d72baa9242688706922752f19b82e663ec42431b0a",
+      "uid": "ade9028cd2a9961c2e44f1f9b5718619",
+      "username": "brett_anda"
+    },
+    "merkle_root": {
+      "ctime": 1571854192,
+      "hash": "c6fdf1b3c396b6777815009c38b8dd1e8a462f4cff60a8cfbf91bc4f02d2ad71fc582b469a705483d98b18501b8fd40531c47506ae3b9673e1cd0014335f675d",
+      "hash_meta": "4858205995d0387e4f537a4f591966a08f2bb912e9631d7921e9269811a60137",
+      "seqno": 8346056
+    },
+    "service": {
+      "entropy": "QND0egokDOylCrLyAE8VwZ6A",
+      "hostname": "brettanda.ca",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 2
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "4.7.1"
+  },
+  "ctime": 1571854199,
+  "expire_in": 504576000,
+  "prev": "dabe9f3421f62baa578fce5f76e49ea15b0bd14a534ece356a1659b5b23aef5d",
+  "seqno": 20,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEggC0aRc2Wj1I5BixR1yuqkkJohwaSJ1Lxm4LmY+xCQxsKp3BheWxvYWTESpcCFMQg2r6fNCH2K6pXj85fduSeoVsL0UpTTs41ahZZtbI6713EIIUlTuq4DC8vBDKeg71OuDiJkFHrW8k838GqvH2FGN3fAgHCo3NpZ8RAdobEAZnTQLlOjG2F0c7SfFPkvuI33KIGExRJb0pJehgfjqjc8B8bLu/KD3q+gpbnJLq8pWX88hXJUnMumJFxCqhzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIP33icF906y3x/dH3LhvjdLpHwOGE0JT0gKFKjd1LZiHo3RhZ80CAqd2ZXJzaW9uAQ==
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/brett_anda
+
+==================================================================
