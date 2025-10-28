@@ -6,3 +6,4 @@
 - for the projects i list, include when, how long, the technologies i used.
 - include where i am located
 - include what i specialize in, in a seperate section from everything i know how to use
+- [this technologies section](./idea-for-technologies-section.png)
