@@ -32,3 +32,15 @@ h1,h2,h3,h4,h5{
 h1 {
   font-size: var(--text-4xl);
 }
+
+
+.dotted-background {
+  // yoinked from https://codepen.io/FlyC/pen/oLpJWJ
+  --dot-bg: var(--background);
+  --dot-color: var(--color-stone-900);
+  --dot-size: 2px;
+  --dot-space: calc(var(--spacing) * 4);
+  background:
+    linear-gradient(90deg, var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space), 
+    linear-gradient(var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space), var(--dot-color);
+}
