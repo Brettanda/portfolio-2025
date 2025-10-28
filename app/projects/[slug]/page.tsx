@@ -37,7 +37,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       </section>
 
       <section className="h-screen">
-        <ImageCarousel></ImageCarousel>
+        <ImageCarousel images={[]} />
       </section>
     </main>
   )
