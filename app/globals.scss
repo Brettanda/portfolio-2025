@@ -3,6 +3,7 @@
 :root {
   --background: var(--color-stone-100);
   --foreground: var(--color-stone-950);
+  --foreground-dimmed: var(--color-stone-300);
 }
 
 @theme inline {
@@ -14,19 +15,21 @@
   :root {
     --background: var(--color-stone-950);
     --foreground: var(--color-stone-100);
+    --foreground-dimmed: var(--color-stone-300);
   }
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: var(--foreground-dimmed);
   font-family: "Cascadia Code", Arial, Helvetica, sans-serif;
 }
 
-h1,h2,h3,h4,h5{
+h1,h2,h3,h4,h5,h6{
   text-transform: capitalize;
   font-family: "Bai Jamjuree", sArial, Helvetica, sans-serif;
   font-weight: 700;
+  color: var(--foreground);
 }
 
 h1 {

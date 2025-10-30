@@ -17,6 +17,7 @@
     "@next/mdx": "^16.0.0",
     "@types/mdx": "^2.0.13",
     "gray-matter": "^4.0.3",
+    "matter-js": "^0.20.0",
     "next": "16.0.0",
     "postcss": "^8.5.6",
     "react": "19.2.0",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.16",
+    "@types/matter-js": "^0.20.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

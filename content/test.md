@@ -2,6 +2,7 @@
 title: WordPress Development
 year: 2025
 technologies: Elementor, WordPress
+images:
 ---
 
 Building custom WordPress themes and plugins with modern tooling.

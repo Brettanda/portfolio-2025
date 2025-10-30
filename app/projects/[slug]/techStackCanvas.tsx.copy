@@ -1,6 +1,5 @@
 "use client"
 
-import Matter from "matter-js";
 import { useEffect, useRef } from "react";
 import { faWordpress, faElementor } from "@fortawesome/free-brands-svg-icons";
 import { icon } from "@fortawesome/fontawesome-svg-core";
@@ -9,20 +8,20 @@ const getRandom = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-// type Position = {
-// x: number
-// y: number
-// s: number
-// spdx: number
-// spdy: number
-// gravSpd: number
-// bounce: number
-// hue: number
-// gravity: number
-// rotation: number
-// isDragging?: boolean
-// faIcon?: any
-// }
+type Position = {
+  x: number
+  y: number
+  s: number
+  spdx: number
+  spdy: number
+  gravSpd: number
+  bounce: number
+  hue: number
+  gravity: number
+  rotation: number
+  isDragging?: boolean
+  faIcon?: any
+}
 
 export default function TechStackCanvas({ technologies }: { technologies: string[] }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -42,60 +41,24 @@ export default function TechStackCanvas({ technologies }: { technologies: string
       elementor: faElementor
     };
 
-    const engine = Matter.Engine.create();
-    const world = engine.world;
-
-    const render = Matter.Render.create({
-      canvas,
-      engine,
-      options: {
-        width: window.innerWidth / 2,
-        height: window.innerHeight,
-        wireframes: false,
-        background: "#00000000",
-      }
-    });
-
-    const floor = Matter.Bodies.rectangle(
-      canvas.width / 2,
-      canvas.height + 25,
-      canvas.width,
-      50,
-      { isStatic: true }
-    )
-    Matter.World.add(world, [floor]);
-
-    const balls = technologies.map((tech, i) => {
-      const radius = 40 + Math.random() * 40;
-      return Matter.Bodies.circle(
-        100 + i * 50,
-        50,
-        radius,
-        { restitution: 0.7, friction: 0.1 }
-      )
-    })
-    Matter.World.add(world, balls);
-
-    // Matter.Engine.run(engine);
-    Matter.Render.run(render);
-    // const Pos: Array<Position> = [];
-    // let dragTarget: Position | null = null;
+    const Pos: Array<Position> = [];
+    let dragTarget: Position | null = null;
     const mouse = { x: 0, y: 0, down: false };
 
-    // for (var i = 0; i < technologies.length; i++) {
-    // var randS = getRandom(40, 80),
-    // randX = getRandom(canvas.width - randS, 1 + randS),
-    // randY = getRandom(canvas.height - randS, 1 + randS),
-    // spdX = getRandom(-3, 3) || 1,
-    // spdY = 0,
-    // gravity = getRandom(5, 10) / 10,
-    // gravSpd = 0,
-    // bounce = 0.7,
-    // hue = getRandom(1, 255),
-    // faIcon = iconMap[technologies[i].toLowerCase()] ?? null;
+    for (var i = 0; i < technologies.length; i++) {
+      var randS = getRandom(40, 80),
+        randX = getRandom(canvas.width - randS, 1 + randS),
+        randY = getRandom(canvas.height - randS, 1 + randS),
+        spdX = getRandom(-3, 3) || 1,
+        spdY = 0,
+        gravity = getRandom(5, 10) / 10,
+        gravSpd = 0,
+        bounce = 0.7,
+        hue = getRandom(1, 255),
+        faIcon = iconMap[technologies[i].toLowerCase()] ?? null;
 
-    // Pos.push({ x: randX, y: randY, s: randS, spdx: spdX, spdy: spdY, gravSpd: gravSpd, bounce: bounce, hue: hue, gravity, faIcon, rotation: 0 });
-    // }
+      Pos.push({ x: randX, y: randY, s: randS, spdx: spdX, spdy: spdY, gravSpd: gravSpd, bounce: bounce, hue: hue, gravity, faIcon, rotation: 0 });
+    }
 
     const getMousePos = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
