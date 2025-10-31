@@ -1,7 +1,7 @@
 ---
 title: WordPress Development
 year: 2025
-technologies: Elementor, WordPress
+technologies: Elementor, WordPress, YoastSEO 
 images:
 ---
 

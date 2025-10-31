@@ -2,295 +2,164 @@
 
 import Matter from "matter-js";
 import { useEffect, useRef } from "react";
-import { faWordpress, faElementor } from "@fortawesome/free-brands-svg-icons";
-import { icon } from "@fortawesome/fontawesome-svg-core";
+import { faWordpress, faElementor, faYoast } from "@fortawesome/free-brands-svg-icons";
+import { icon, IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
-const getRandom = (min: number, max: number) => {
-  return Math.floor(Math.random() * (max - min + 1) + min);
+import "./pathseg.js";
+
+type Tech = {
+  name: string;
+  icon: IconDefinition
+  iconColour: string
 }
 
-// type Position = {
-// x: number
-// y: number
-// s: number
-// spdx: number
-// spdy: number
-// gravSpd: number
-// bounce: number
-// hue: number
-// gravity: number
-// rotation: number
-// isDragging?: boolean
-// faIcon?: any
-// }
+const techList: Tech[] = [
+  { name: "WordPress", icon: faWordpress, iconColour: "#444140" },
+  { name: "Elementor", icon: faElementor, iconColour: "#FF7BE5" },
+  { name: "YoastSEO", icon: faYoast, iconColour: "#A61E69" }
+];
+
+type Paths = {
+  path: Path2D
+  iconColour: string
+}
 
 export default function TechStackCanvas({ technologies }: { technologies: string[] }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const requestRef = useRef<number | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const context = canvas.getContext("2d");
-    if (!context) return;
-    context.canvas.width = window.innerWidth / 2;
-    context.canvas.height = window.innerHeight;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    const iconMap: Record<string, any> = {
-      wordpress: faWordpress,
-      elementor: faElementor
-    };
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth / 2;
 
     const engine = Matter.Engine.create();
     const world = engine.world;
 
-    const render = Matter.Render.create({
-      canvas,
-      engine,
-      options: {
-        width: window.innerWidth / 2,
-        height: window.innerHeight,
-        wireframes: false,
-        background: "#00000000",
-      }
-    });
-
-    const floor = Matter.Bodies.rectangle(
-      canvas.width / 2,
-      canvas.height + 25,
-      canvas.width,
-      50,
-      { isStatic: true }
-    )
-    Matter.World.add(world, [floor]);
-
-    const balls = technologies.map((tech, i) => {
-      const radius = 40 + Math.random() * 40;
-      return Matter.Bodies.circle(
-        100 + i * 50,
-        50,
-        radius,
-        { restitution: 0.7, friction: 0.1 }
-      )
-    })
-    Matter.World.add(world, balls);
-
-    // Matter.Engine.run(engine);
-    Matter.Render.run(render);
-    // const Pos: Array<Position> = [];
-    // let dragTarget: Position | null = null;
-    const mouse = { x: 0, y: 0, down: false };
-
-    // for (var i = 0; i < technologies.length; i++) {
-    // var randS = getRandom(40, 80),
-    // randX = getRandom(canvas.width - randS, 1 + randS),
-    // randY = getRandom(canvas.height - randS, 1 + randS),
-    // spdX = getRandom(-3, 3) || 1,
-    // spdY = 0,
-    // gravity = getRandom(5, 10) / 10,
-    // gravSpd = 0,
-    // bounce = 0.7,
-    // hue = getRandom(1, 255),
-    // faIcon = iconMap[technologies[i].toLowerCase()] ?? null;
-
-    // Pos.push({ x: randX, y: randY, s: randS, spdx: spdX, spdy: spdY, gravSpd: gravSpd, bounce: bounce, hue: hue, gravity, faIcon, rotation: 0 });
+    // const render = Matter.Render.create({
+    // canvas,
+    // engine,
+    // options: {
+    // width: window.innerWidth / 2,
+    // height: window.innerHeight,
+    // wireframes: false,
+    // background: "#00000000",
     // }
+    // });
 
-    const getMousePos = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-    }
+    const walls = [
+      Matter.Bodies.rectangle(canvas.width / 2, canvas.height + 25, canvas.width, 50, { isStatic: true }), // floor
+      Matter.Bodies.rectangle(-25, canvas.height / 2, 50, canvas.height, { isStatic: true }), //left
+      Matter.Bodies.rectangle(canvas.width + 25, canvas.height / 2, 50, canvas.height, { isStatic: true }) //right
+    ]
+    Matter.World.add(world, walls);
 
-    const handleMouseDown = (e: MouseEvent) => {
-      mouse.down = true;
-      const { x, y } = getMousePos(e);
-      mouse.x = x;
-      mouse.y = y;
+    // const iconImages = techList.map((tech) => {
+    // const svgHTML = icon(tech.icon).html[0];
+    // const svgBlob = new Blob([svgHTML], { type: "image/svg+xml;charset=utf-8" });
+    // const url = URL.createObjectURL(svgBlob);
+    // const img = new Image();
+    // img.src = url;
+    // return img;
+    // });
+    const bodies: Matter.Body[] = [];
+    const paths: Paths[] = [];
 
-      for (const p of Pos) {
-        const dx = x - p.x;
-        const dy = y - p.y;
+    techList.map((tech, i) => {
+      const svgHtml = icon(tech.icon).html[0];
+      const parser = new DOMParser();
+      const svgDoc = parser.parseFromString(svgHtml, "image/svg+xml");
+      const pathElements = svgDoc.querySelectorAll("path");
 
-        if (Math.hypot(dx, dy) < p.s) {
-          dragTarget = p;
-          p.isDragging = true;
-          p.spdx = 0;
-          p.spdy = 0;
-          p.gravSpd = 0;
-          break;
-        }
-      }
-    }
+      // const verticesArrays: Matter.Vector[][] = [];
 
-    const handleMouseUp = () => {
-      mouse.down = false;
-      if (dragTarget) dragTarget.isDragging = false;
-      dragTarget = null;
-    }
+      const path2d = new Path2D();
+      pathElements.forEach((p) => path2d.addPath(new Path2D(p.getAttribute("d") || "")));
+      paths.push({ path: path2d, iconColour: tech.iconColour });
+      // paths.forEach((path) => {
+      // try {
+      // const verts = Matter.Svg.pathToVertices(path, 15);
+      // verticesArrays.push(verts);
+      // } catch (e) {
+      // console.warn("Failed to convert SVG path:", e);
+      // }
+      // })
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const { x, y } = getMousePos(e);
-      mouse.x = x;
-      mouse.y = y;
-
-      if (dragTarget && mouse.down) {
-        dragTarget.x = x;
-        dragTarget.y = y;
-      }
-    }
-    const handleResize = () => {
-      if (!canvas) return;
-
-      canvas.width = window.innerWidth / 2;
-      canvas.height = window.innerHeight;
-
-      for (const p of Pos) {
-        p.x = Math.min(Math.max(p.s, p.x), canvas.width - p.s);
-        p.y = Math.min(Math.max(p.s, p.y), canvas.height - p.s);
-      }
-    }
-
-    canvas.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("mouseup", handleMouseUp);
-    window.addEventListener("resize", handleResize)
-    canvas.addEventListener("mousemove", handleMouseMove)
-
-    const drawIcon = (ctx: CanvasRenderingContext2D, faIcon: any, x: number, y: number, size: number, colour: string, rotation: number) => {
-      if (!faIcon) return;
-
-      const abstract = icon(faIcon).abstract;
-      if (!abstract?.length) return;
-
-      const pathData = abstract[0].children[0]?.attributes?.d;
-      if (!pathData) return;
-
-      const path = new Path2D(pathData);
-
-      ctx.save();
-      ctx.translate(x, y);
-      // ctx.translate(x - size / 2, y - size / 2);
-      ctx.rotate(rotation);
-      ctx.scale(size / 512, size / 512);
-      ctx.translate(-256, -256);
-      ctx.fillStyle = colour;
-      ctx.fill(path);
-      ctx.restore();
-    }
-
-    const draw = (time: number) => {
-      context.clearRect(0, 0, canvas.width, canvas.height)
-
-      for (var i = 0; i < Pos.length; i++) {
-        for (var j = i + 1; j < Pos.length; j++) {
-          const a = Pos[i];
-          const b = Pos[j];
-          const dx = b.x - a.x;
-          const dy = b.y - a.y;
-          const dist = Math.hypot(dx, dy);
-          const minDist = a.s + b.s;
-
-          if (dist < minDist) {
-            const nx = dx / dist;
-            const ny = dy / dist;
-
-            // stop overlapping
-            const overlap = (minDist - dist) / 2;
-            a.x -= nx * overlap;
-            a.y -= ny * overlap;
-            b.x += nx * overlap;
-            b.y += ny * overlap;
-
-            const dvx = b.spdx - a.spdx;
-            const dvy = b.spdy - a.spdy;
-            const dot = dvx * nx + dvy * ny;
-
-            if (dot > 0) continue;
-
-            const bounce = Math.min(a.bounce, b.bounce);
-            const massA = a.s * a.s;
-            const massB = b.s * b.s;
-            const impulse = (2 * dot) / (massA + massB);
-            a.spdx += impulse * massB * nx * bounce;
-            a.spdy += impulse * massB * ny * bounce;
-            b.spdx -= impulse * massA * nx * bounce;
-            b.spdy -= impulse * massA * ny * bounce;
-          }
-        }
-      }
-      for (var i = 0; i < Pos.length; i++) {
-        const p = Pos[i];
-
-        context.beginPath();
-        context.fillStyle = `hsla(${p.hue},100%,50%,0.5)`;
-        context.arc(p.x, p.y, p.s, 0, 2 * Math.PI)
-        context.fill();
-        context.closePath();
-
-        drawIcon(context, p.faIcon, p.x, p.y, p.s * 1.2, "#ffffff", p.rotation!);
-
-        const friction = 0.995;
-        if (!p.isDragging) {
-          p.gravSpd += p.gravity;
-          p.x += p.spdx;
-          p.y += p.spdy + p.gravSpd;
-          p.rotation += p.spdx / p.s;
-          p.spdx *= friction;
-        }
-
-        // const epsilon = 0.5;
-        const bottom = canvas.height - p.s;
-        // if (p.y >= bottom && Math.abs(p.gravSpd) < epsilon) {
-        // p.gravSpd = 0;
-        // p.y = bottom;
-        // } else 
-        if (p.y > bottom) {
-          p.y = bottom;
-          p.gravSpd = -(p.gravSpd * p.bounce);
-        }
-
-        // top collision
-        if (p.y - p.s < 0) {
-          p.y = p.s;
-          p.gravSpd = -(p.gravSpd * p.bounce);
-        }
-
-        // left/right wall collisions
-        if (p.x + p.s > canvas.width) {
-          p.x = canvas.width - p.s;
-          p.spdx = -(p.spdx * p.bounce);
-        } else if (p.x - p.s < 0) {
-          p.x = p.s;
-          p.spdx = -(p.spdx * p.bounce);
-        }
-
-        // for (const other of Pos) {
-        // if (other === p) continue;
-        // const dx = other.x - p.x;
-        // const dy = other.y - p.y;
-        // const dist = Math.hypot(dx, dy);
-        // const minDist = p.s + other.s;
-
-        // if (dist < minDist && p.y < other.y && Math.abs(p.spdy + p.gravSpd) < epsilon) {
-        // p.gravSpd = 0;
-        // p.y = other.y - minDist;
+      const radius = 90 + Math.random() * (canvas.width / 5) - (techList.length * 10);
+      const body = Matter.Bodies.circle(200 + i * 200, 100, radius, {
+        restitution: 0.2,
+        friction: 0.1,
+        // render: {
+        // fillStyle: "#ff0fff"
         // }
-        // }
-        // const epsilon = 0.1;
-        // if (Math.abs(p.gravSpd) < epsilon) p.gravSpd = 0;
-        // if (Math.abs(p.spdx) < epsilon) p.spdx = 0;
-      }
-      requestRef.current = requestAnimationFrame(draw)
-    }
+      });
 
-    requestRef.current = requestAnimationFrame(draw)
+      if (body) bodies.push(body);
+      // const radius = 40 + Math.random() * 40;
+      // return Matter.Bodies.circle(
+      // 100 + i * 50,
+      // 50,
+      // radius,
+      // { restitution: 0.7, friction: 0.1 }
+      // )
+    })
+    // Matter.World.add(world, balls);
+    Matter.World.add(world, bodies);
+
+    const mouse = Matter.Mouse.create(canvas);
+    const mouseConstraint = Matter.MouseConstraint.create(engine, {
+      mouse,
+      constraint: {
+        stiffness: 0.2,
+        render: { visible: true }
+      }
+    })
+    Matter.World.add(world, mouseConstraint);
+    // Matter.Render.run(render);
+    const render = () => {
+      Matter.Engine.update(engine, 1000 / 60);
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      bodies.forEach((ball, i) => {
+        const { x, y } = ball.position;
+
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(ball.angle);
+
+        const radius = ball.circleRadius || 40;
+        // const ballball = techList.find((b) => b.name == ball.)
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.fillStyle = paths[i].iconColour;
+        ctx.fill();
+        // ctx.strokeStyle = "#00ffff";
+        // ctx.lineWidth = 2;
+        // ctx.stroke();
+        ctx.closePath();
+
+        const scale = 0.3 * radius / 100;
+        ctx.scale(scale, scale);
+        ctx.translate(-256, -256);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill(paths[i].path)
+        ctx.restore();
+      })
+      requestAnimationFrame(render)
+    }
+    render();
+
+    const runner = Matter.Runner.create();
+    Matter.Runner.run(runner, engine);
 
     return () => {
-      if (requestRef.current) cancelAnimationFrame(requestRef.current)
-      canvas.removeEventListener("mousedown", handleMouseDown)
-      window.removeEventListener("mouseup", handleMouseUp)
-      window.removeEventListener("resize", handleResize)
-      canvas.removeEventListener("mousemove", handleMouseMove)
+      // Matter.Render.stop(render);
+      Matter.Engine.clear(engine);
+      canvas.remove();
     }
   }, [technologies])
 
