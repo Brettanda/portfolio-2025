@@ -4,8 +4,7 @@ import Matter from "matter-js";
 import { useEffect, useRef } from "react";
 import { faWordpress, faElementor, faYoast } from "@fortawesome/free-brands-svg-icons";
 import { icon, IconDefinition } from "@fortawesome/fontawesome-svg-core";
-
-// import "./pathseg.js";
+import { platform } from "os";
 
 type Tech = {
   name: string;
@@ -24,7 +23,7 @@ type Paths = {
   iconColour: string
 }
 
-export default function TechStackCanvas({ technologies }: { technologies: string[] }) {
+export default function SkillCanvas({ className, technologies }: { className: string, technologies: string[] }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -38,7 +37,7 @@ export default function TechStackCanvas({ technologies }: { technologies: string
     if (!ctx) return;
 
     canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth / 2;
+    canvas.width = window.innerWidth;
 
     const engine = Matter.Engine.create();
     const world = engine.world;
@@ -50,11 +49,16 @@ export default function TechStackCanvas({ technologies }: { technologies: string
     ]
     Matter.World.add(world, walls);
 
+    const platforms = [
+      Matter.Bodies.rectangle(canvas.width / 2, canvas.height / 2, canvas.width / 2, 50, { isStatic: true, render: { fillStyle: "#ff0000ff", strokeStyle: "pink", lineWidth: 10 } })
+    ]
+    Matter.World.add(world, platforms)
+
     const bodies: Matter.Body[] = [];
     const paths: Paths[] = [];
 
-    let radius = 70;
-    if (techList.length < 5) radius = 100;
+    let radius = 60;
+    if (techList.length < 5) radius = 40;
     techList.map((tech, i) => {
       const svgHtml = icon(tech.icon).html[0];
       const parser = new DOMParser();
@@ -104,6 +108,25 @@ export default function TechStackCanvas({ technologies }: { technologies: string
       Matter.Engine.update(engine, 1000 / 60);
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+      platforms.forEach((platform) => {
+        const { x, y } = platform.position;
+
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(platform.angle - platform.angle);
+
+        const verts = platform.vertices;
+        ctx.beginPath();
+        ctx.moveTo(verts[0].x - x, verts[0].y - y);
+        for (let j = 1; j < verts.length; j++) {
+          ctx.lineTo(verts[j].x - x, verts[j].y - y);
+        }
+        ctx.closePath()
+        ctx.fillStyle = platform.render.fillStyle || "#ff0000";
+        ctx.fill();
+        ctx.restore();
+      });
+
       bodies.forEach((ball, i) => {
         const { x, y } = ball.position;
 
@@ -136,15 +159,17 @@ export default function TechStackCanvas({ technologies }: { technologies: string
     const runner = Matter.Runner.create();
     Matter.Runner.run(runner, engine);
 
+    Matter.Body.rotate(platforms[0], -0.5);
+
     const handleResize = () => {
       canvas.width = window.innerWidth / 2;
       canvas.height = window.innerHeight;
-      Matter.Body.setPosition(walls[0], { x: canvas.width / 2, y: canvas.height + 25 })
-      Matter.Body.scale(walls[0], canvas.width / prevCanvasWidth, 1);
-      Matter.Body.setPosition(walls[1], { x: -25, y: canvas.height / 2, })
-      Matter.Body.scale(walls[1], 1, canvas.height / prevCanvasHeight)
-      Matter.Body.setPosition(walls[2], { x: canvas.width + 25, y: canvas.height / 2, })
-      Matter.Body.scale(walls[2], 1, canvas.height / prevCanvasHeight)
+      // Matter.Body.setPosition(walls[0], { x: canvas.width / 2, y: canvas.height + 25 })
+      // Matter.Body.scale(walls[0], canvas.width / prevCanvasWidth, 1);
+      // Matter.Body.setPosition(walls[1], { x: -25, y: canvas.height / 2, })
+      // Matter.Body.scale(walls[1], 1, canvas.height / prevCanvasHeight)
+      // Matter.Body.setPosition(walls[2], { x: canvas.width + 25, y: canvas.height / 2, })
+      // Matter.Body.scale(walls[2], 1, canvas.height / prevCanvasHeight)
       prevCanvasWidth = canvas.width;
       prevCanvasHeight = canvas.height;
     }
@@ -157,6 +182,6 @@ export default function TechStackCanvas({ technologies }: { technologies: string
   }, [technologies])
 
   return (
-    <canvas ref={canvasRef} className="backface" id="backface"></canvas>
+    <canvas ref={canvasRef} className={"backface " + className} id="backface"></canvas>
   )
 };
