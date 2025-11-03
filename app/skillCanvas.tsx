@@ -162,14 +162,15 @@ export default function SkillCanvas({ className, technologies }: { className: st
     Matter.Body.rotate(platforms[0], -0.5);
 
     const handleResize = () => {
-      canvas.width = window.innerWidth / 2;
+      canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      // Matter.Body.setPosition(walls[0], { x: canvas.width / 2, y: canvas.height + 25 })
-      // Matter.Body.scale(walls[0], canvas.width / prevCanvasWidth, 1);
-      // Matter.Body.setPosition(walls[1], { x: -25, y: canvas.height / 2, })
-      // Matter.Body.scale(walls[1], 1, canvas.height / prevCanvasHeight)
-      // Matter.Body.setPosition(walls[2], { x: canvas.width + 25, y: canvas.height / 2, })
-      // Matter.Body.scale(walls[2], 1, canvas.height / prevCanvasHeight)
+      Matter.Body.setPosition(walls[0], { x: canvas.width / 2, y: canvas.height + 25 })
+      Matter.Body.scale(walls[0], canvas.width / prevCanvasWidth, 1);
+      Matter.Body.setPosition(walls[1], { x: -25, y: canvas.height / 2, })
+      Matter.Body.scale(walls[1], 1, canvas.height / prevCanvasHeight)
+      Matter.Body.setPosition(walls[2], { x: canvas.width + 25, y: canvas.height / 2, })
+      Matter.Body.scale(walls[2], 1, canvas.height / prevCanvasHeight)
+      Matter.Body.setPosition(platforms[0], { x: canvas.width / 2, y: canvas.height / 2 })
       prevCanvasWidth = canvas.width;
       prevCanvasHeight = canvas.height;
     }
